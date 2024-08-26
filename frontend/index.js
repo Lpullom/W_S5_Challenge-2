@@ -1,7 +1,9 @@
 async function sprintChallenge5() { // Note the async keyword so you can use `await` inside sprintChallenge5
+
+   // 👇 WORK ONLY BELOW THIS LINE 👇
   // 👇 WORK ONLY BELOW THIS LINE 👇
   // 👇 WORK ONLY BELOW THIS LINE 👇
-  // 👇 WORK ONLY BELOW THIS LINE 👇
+
 
   // 👇 ==================== TASK 1 START ==================== 👇
 
@@ -9,9 +11,11 @@ async function sprintChallenge5() { // Note the async keyword so you can use `aw
   // ❗ Use the variables `mentors` and `learners` to store the data.
   // ❗ Use the await keyword when using axios.
 
-  let mentors = [] // fix this
-  let learners = [] // fix this
+  let mentorsRes = await axios.get('http://localhost:3003/api/mentors') // fix this
+  let learnersRes =  await axios.get('http://localhost:3003/api/learners') // fix this
 
+  const mentors = mentorsRes.data
+  const learners = learnersRes.data 
   // 👆 ==================== TASK 1 END ====================== 👆
 
   // 👇 ==================== TASK 2 START ==================== 👇
@@ -28,6 +32,21 @@ async function sprintChallenge5() { // Note the async keyword so you can use `aw
   //     "Grace Hopper"
   //   ]`
   // }
+ const formattedData = []
+   learners.forEach (learner => {
+    const result = {
+      ...learner,
+      mentors: learner.mentors.map(mID => {
+        const mentor = mentors.find(mentorObj => mentorObj.id == mID)
+        return mentor.firstName + " " + mentor.lastName
+    })
+  }
+  formattedData.push(result)
+  })
+
+
+
+
 
   // 👆 ==================== TASK 2 END ====================== 👆
 
@@ -38,7 +57,36 @@ async function sprintChallenge5() { // Note the async keyword so you can use `aw
 
   // 👇 ==================== TASK 3 START ==================== 👇
 
-  for (let learner of learners) { // looping over each learner object
+
+    formattedData.forEach(learner => { // looping over each learner
+    const card = document.createElement('div')
+    const heading = document.createElement('h3')
+    const email = document.createElement('div')
+    const mentorsHeading = document.createElement('h4')
+    const mentorsList = document.createElement('ul') 
+
+    heading.textContent = learner.fullName
+    email.textContent = learner.email
+    mentorsHeading.textContent = "Mentors"
+    mentorsHeading.classList.add("closed")
+
+  
+    card.classList.add('card')
+    card.appendChild(heading)
+    card.appendChild(email)
+    card.appendChild(mentorsHeading)
+    card.appendChild(mentorsList)
+   
+    learner.mentors.forEach(mentorName => {
+      const li = document.createElement('li')
+      li.textContent = mentorName
+      mentorsList.appendChild(li)
+      
+   })
+
+   
+  
+
 
     // 🧠 Flesh out the elements that describe each learner
     // ❗ Give the elements below their (initial) classes, textContent and proper nesting.
@@ -47,17 +95,13 @@ async function sprintChallenge5() { // Note the async keyword so you can use `aw
     // ❗ Fill each <li> with a mentor name, and append it to the <ul> mentorList.
     // ❗ Inspect the mock site closely to understand what the initial texts and classes look like!
 
-    const card = document.createElement('div')
-    const heading = document.createElement('h3')
-    const email = document.createElement('div')
-    const mentorsHeading = document.createElement('h4')
-    const mentorsList = document.createElement('ul')
-
+    
     // 👆 ==================== TASK 3 END ====================== 👆
 
     // 👆 WORK ONLY ABOVE THIS LINE 👆
     // 👆 WORK ONLY ABOVE THIS LINE 👆
     // 👆 WORK ONLY ABOVE THIS LINE 👆
+    
     card.appendChild(mentorsList)
     card.dataset.fullName = learner.fullName
     cardsContainer.appendChild(card)
@@ -97,12 +141,12 @@ async function sprintChallenge5() { // Note the async keyword so you can use `aw
         }
       }
     })
-  }
+    })
 
   const footer = document.querySelector('footer')
   const currentYear = new Date().getFullYear()
   footer.textContent = `© BLOOM INSTITUTE OF TECHNOLOGY ${currentYear}`
-}
+  }
 
 // ❗ DO NOT CHANGE THIS CODE. WORK ONLY INSIDE TASKS 1, 2, 3
 if (typeof module !== 'undefined' && module.exports) module.exports = { sprintChallenge5 }
